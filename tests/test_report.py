@@ -1,0 +1,50 @@
+import unittest
+
+from authlog_watch.models import AuthEvent
+from authlog_watch.report import summarize_events
+
+
+def make_event(event_type: str, user: str, source_ip: str) -> AuthEvent:
+    return AuthEvent(
+        timestamp="Jul  1 08:15:01",
+        host="lab",
+        service="sshd",
+        event_type=event_type,
+        user=user,
+        source_ip=source_ip,
+        port="53321",
+        raw="sample",
+    )
+
+
+class ReportTest(unittest.TestCase):
+    def test_summarize_events_counts_auth_types(self):
+        events = [
+            make_event("failed_password", "alice", "198.51.100.10"),
+            make_event("invalid_user", "admin", "203.0.113.50"),
+            make_event("accepted_password", "alice", "198.51.100.10"),
+        ]
+
+        summary = summarize_events(events)
+
+        self.assertEqual(summary.events_checked, 3)
+        self.assertEqual(summary.failed_passwords, 1)
+        self.assertEqual(summary.invalid_users, 1)
+        self.assertEqual(summary.accepted_passwords, 1)
+
+    def test_summarize_events_tracks_top_failed_sources_and_users(self):
+        events = [
+            make_event("failed_password", "alice", "198.51.100.10"),
+            make_event("failed_password", "alice", "198.51.100.10"),
+            make_event("invalid_user", "admin", "203.0.113.50"),
+            make_event("accepted_password", "bob", "192.0.2.20"),
+        ]
+
+        summary = summarize_events(events)
+
+        self.assertEqual(summary.top_source_ips[0], ("198.51.100.10", 2))
+        self.assertEqual(summary.top_users[0], ("alice", 2))
+
+
+if __name__ == "__main__":
+    unittest.main()
