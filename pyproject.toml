@@ -1,0 +1,11 @@
+[project]
+name = "authlog-watch"
+version = "0.1.0"
+description = "Small Linux auth.log triage helper for blue-team practice"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Haitao Zheng" }]
+
+[project.scripts]
+authlog-watch = "authlog_watch.cli:main"
