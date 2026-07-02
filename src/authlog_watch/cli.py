@@ -4,6 +4,7 @@ import json
 from .parser import load_events
 from .report import AuthSummary, summarize_events
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="authlog-watch",
@@ -15,10 +16,16 @@ def main() -> None:
         action="store_true",
         help="Print the summary as JSON for scripts",
     )
+    parser.add_argument(
+        "--failed-threshold",
+        type=positive_int,
+        default=3,
+        help="Flag source IPs with this many failed SSH login events",
+    )
     args = parser.parse_args()
 
     events = load_events(args.path)
-    summary = summarize_events(events)
+    summary = summarize_events(events, failed_threshold=args.failed_threshold)
 
     if args.json:
         print(json.dumps(summary.to_dict(), indent=2))
@@ -42,3 +49,15 @@ def print_report(summary: AuthSummary) -> None:
         print("\nTop targeted users")
         for user, count in summary.top_users:
             print(f"- {user}: {count}")
+
+    if summary.findings:
+        print("\nFindings")
+        for finding in summary.findings:
+            print(f"- {finding.rule_id}: {finding.message}")
+
+
+def positive_int(value: str) -> int:
+    parsed = int(value)
+    if parsed < 1:
+        raise argparse.ArgumentTypeError("must be at least 1")
+    return parsed
