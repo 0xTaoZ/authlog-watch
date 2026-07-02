@@ -43,10 +43,23 @@ JSON output is available for small scripts:
 PYTHONPATH=src python3 -m authlog_watch samples/auth.log --json
 ```
 
+## Repeated failure findings
+
+The default report flags a source IP after 3 failed SSH login events. Use a lower
+or higher threshold when reviewing short lab logs or noisy production logs:
+
+```bash
+PYTHONPATH=src python3 -m authlog_watch samples/auth.log --failed-threshold 2
+```
+
+That adds a `Findings` section to the text report and a `findings` list to JSON
+output. The rule counts both normal failed passwords and invalid-user attempts.
+
 ## Current plan
 
 - parse common SSH login events
 - summarize failed login sources and target users
 - print text and JSON reports
 - keep fake sample logs for practice
-- add simple warning rules for repeated failures later
+- flag repeated failed login sources
+- add more SSH event types over time
