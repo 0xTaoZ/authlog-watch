@@ -45,6 +45,24 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(summary.top_source_ips[0], ("198.51.100.10", 2))
         self.assertEqual(summary.top_users[0], ("alice", 2))
 
+    def test_summarize_events_flags_repeated_failed_sources(self):
+        events = [
+            make_event("failed_password", "alice", "198.51.100.10"),
+            make_event("invalid_user", "root", "198.51.100.10"),
+            make_event("failed_password", "bob", "203.0.113.50"),
+        ]
+
+        summary = summarize_events(events, failed_threshold=2)
+
+        self.assertEqual(len(summary.findings), 1)
+        self.assertEqual(summary.findings[0].rule_id, "repeated_failed_source")
+        self.assertEqual(summary.findings[0].source_ip, "198.51.100.10")
+        self.assertEqual(summary.findings[0].failed_count, 2)
+
+    def test_summarize_events_rejects_invalid_threshold(self):
+        with self.assertRaises(ValueError):
+            summarize_events([], failed_threshold=0)
+
 
 if __name__ == "__main__":
     unittest.main()
