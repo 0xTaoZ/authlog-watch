@@ -31,6 +31,26 @@ class ParserTest(unittest.TestCase):
         self.assertIsNotNone(event)
         self.assertEqual(event.event_type, "accepted_password")
 
+    def test_parse_disconnected_authenticating_user(self):
+        line = "Jul  1 08:25:12 lab sshd[1852]: Disconnected from authenticating user root 192.168.1.10 port 44321 [preauth]"
+        
+        event = parse_line(line)
+        
+        self.assertIsNotNone(event)
+        self.assertEqual(event.event_type, "disconnected")
+        self.assertEqual(event.user, "root")
+        self.assertEqual(event.source_ip, "192.168.1.10")
+
+    def test_parse_disconnected_invalid_user(self):
+        line = "Jul  1 08:26:15 lab sshd[1855]: Disconnected from invalid user admin 10.0.0.1 port 12345 [preauth]"
+        
+        event = parse_line(line)
+        
+        self.assertIsNotNone(event)
+        self.assertEqual(event.event_type, "disconnected")
+        self.assertEqual(event.user, "admin")
+        self.assertEqual(event.source_ip, "10.0.0.1")
+
     def test_parse_lines_ignores_unknown_lines(self):
         lines = [
             "Jul  1 08:15:01 lab sudo: alice : TTY=pts/0 ; PWD=/home/alice ; USER=root ; COMMAND=/usr/bin/id",

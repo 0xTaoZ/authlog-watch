@@ -19,6 +19,11 @@ ACCEPTED_PASSWORD_RE = re.compile(
     r"^Accepted password for (?P<user>\S+) from (?P<source_ip>\S+) port (?P<port>\d+)"
 )
 
+DISCONNECTED_RE = re.compile(
+    r"^Disconnected from (?:(?P<invalid>invalid user)\s+|(?P<auth>authenticating user)\s+)?"
+    r"(?P<user>\S+) (?P<source_ip>\S+) port (?P<port>\d+)"
+)
+
 
 def load_events(path: str | Path) -> list[AuthEvent]:
     lines = Path(path).read_text(encoding="utf-8").splitlines()
@@ -55,6 +60,15 @@ def parse_line(line: str) -> AuthEvent | None:
             prefix=prefix,
             match=accepted,
             event_type="accepted_password",
+            raw=line,
+        )
+
+    disconnected = DISCONNECTED_RE.match(message)
+    if disconnected:
+        return make_event(
+            prefix=prefix,
+            match=disconnected,
+            event_type="disconnected",
             raw=line,
         )
 
