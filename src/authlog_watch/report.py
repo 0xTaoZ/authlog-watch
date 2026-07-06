@@ -26,6 +26,7 @@ class AuthSummary:
     failed_passwords: int
     invalid_users: int
     accepted_passwords: int
+    disconnected: int
     top_source_ips: list[tuple[str, int]]
     top_users: list[tuple[str, int]]
     findings: list[AuthFinding]
@@ -36,6 +37,7 @@ class AuthSummary:
             "failed_passwords": self.failed_passwords,
             "invalid_users": self.invalid_users,
             "accepted_passwords": self.accepted_passwords,
+            "disconnected": self.disconnected,
             "top_source_ips": [
                 {"source_ip": source_ip, "count": count}
                 for source_ip, count in self.top_source_ips
@@ -65,6 +67,7 @@ def summarize_events(
         failed_passwords=count_type(events, "failed_password"),
         invalid_users=count_type(events, "invalid_user"),
         accepted_passwords=count_type(events, "accepted_password"),
+        disconnected=count_type(events, "disconnected"),
         top_source_ips=failed_source_counts.most_common(limit),
         top_users=Counter(event.user for event in failed_events).most_common(limit),
         findings=make_failed_source_findings(failed_source_counts, failed_threshold),
