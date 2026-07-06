@@ -20,7 +20,7 @@ ACCEPTED_PASSWORD_RE = re.compile(
 )
 
 DISCONNECTED_RE = re.compile(
-    r"^Disconnected from (?:(?P<invalid>invalid user)\s+|(?P<auth>authenticating user)\s+)?"
+    r"^Disconnected from (?:(?P<invalid>invalid user)\s+|(?P<auth>authenticating user)\s+|user\s+)?"
     r"(?P<user>\S+) (?P<source_ip>\S+) port (?P<port>\d+)"
 )
 

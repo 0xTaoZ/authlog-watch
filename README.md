@@ -26,6 +26,7 @@ SSH events parsed: 5
 Failed passwords: 2
 Invalid users: 2
 Accepted passwords: 1
+Disconnected: 1
 
 Top failed source IPs
 - 198.51.100.10: 2

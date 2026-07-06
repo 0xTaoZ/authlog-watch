@@ -39,6 +39,7 @@ def print_report(summary: AuthSummary) -> None:
     print(f"Failed passwords: {summary.failed_passwords}")
     print(f"Invalid users: {summary.invalid_users}")
     print(f"Accepted passwords: {summary.accepted_passwords}")
+    print(f"Disconnected: {summary.disconnected}")
 
     if summary.top_source_ips:
         print("\nTop failed source IPs")

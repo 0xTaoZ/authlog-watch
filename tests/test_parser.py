@@ -51,6 +51,16 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(event.user, "admin")
         self.assertEqual(event.source_ip, "10.0.0.1")
 
+    def test_parse_disconnected_plain_user(self):
+        line = "Jul  1 08:27:10 lab sshd[1856]: Disconnected from user alice 192.168.1.10 port 12345"
+        
+        event = parse_line(line)
+        
+        self.assertIsNotNone(event)
+        self.assertEqual(event.event_type, "disconnected")
+        self.assertEqual(event.user, "alice")
+        self.assertEqual(event.source_ip, "192.168.1.10")
+
     def test_parse_lines_ignores_unknown_lines(self):
         lines = [
             "Jul  1 08:15:01 lab sudo: alice : TTY=pts/0 ; PWD=/home/alice ; USER=root ; COMMAND=/usr/bin/id",
