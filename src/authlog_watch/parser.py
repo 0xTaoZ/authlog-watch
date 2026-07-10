@@ -19,6 +19,10 @@ ACCEPTED_PASSWORD_RE = re.compile(
     r"^Accepted password for (?P<user>\S+) from (?P<source_ip>\S+) port (?P<port>\d+)"
 )
 
+ACCEPTED_PUBLICKEY_RE = re.compile(
+    r"^Accepted publickey for (?P<user>\S+) from (?P<source_ip>\S+) port (?P<port>\d+)"
+)
+
 DISCONNECTED_RE = re.compile(
     r"^Disconnected from (?:(?P<invalid>invalid user)\s+|(?P<auth>authenticating user)\s+|user\s+)?"
     r"(?P<user>\S+) (?P<source_ip>\S+) port (?P<port>\d+)"
@@ -60,6 +64,15 @@ def parse_line(line: str) -> AuthEvent | None:
             prefix=prefix,
             match=accepted,
             event_type="accepted_password",
+            raw=line,
+        )
+
+    accepted_publickey = ACCEPTED_PUBLICKEY_RE.match(message)
+    if accepted_publickey:
+        return make_event(
+            prefix=prefix,
+            match=accepted_publickey,
+            event_type="accepted_publickey",
             raw=line,
         )
 

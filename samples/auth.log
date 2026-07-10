@@ -3,4 +3,5 @@ Jul  1 08:15:14 lab sshd[1843]: Failed password for alice from 198.51.100.10 por
 Jul  1 08:17:44 lab sshd[1848]: Failed password for invalid user admin from 203.0.113.50 port 49152 ssh2
 Jul  1 08:18:03 lab sshd[1849]: Failed password for invalid user test from 203.0.113.50 port 49155 ssh2
 Jul  1 08:21:02 lab sshd[1850]: Accepted password for alice from 198.51.100.10 port 53330 ssh2
+Jul  1 08:22:10 lab sshd[1851]: Accepted publickey for deploy from 203.0.113.77 port 51234 ssh2: ED25519 SHA256:abc123
 Jul  1 08:22:30 lab sudo: alice : TTY=pts/0 ; PWD=/home/alice ; USER=root ; COMMAND=/usr/bin/id

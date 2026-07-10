@@ -31,6 +31,16 @@ class ParserTest(unittest.TestCase):
         self.assertIsNotNone(event)
         self.assertEqual(event.event_type, "accepted_password")
 
+    def test_parse_accepted_publickey(self):
+        line = "Jul  1 08:22:10 lab sshd[1851]: Accepted publickey for deploy from 203.0.113.77 port 51234 ssh2: ED25519 SHA256:abc123"
+
+        event = parse_line(line)
+
+        self.assertIsNotNone(event)
+        self.assertEqual(event.event_type, "accepted_publickey")
+        self.assertEqual(event.user, "deploy")
+        self.assertEqual(event.source_ip, "203.0.113.77")
+
     def test_parse_disconnected_authenticating_user(self):
         line = "Jul  1 08:25:12 lab sshd[1852]: Disconnected from authenticating user root 192.168.1.10 port 44321 [preauth]"
         

@@ -22,11 +22,12 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 
 ```text
 authlog-watch
-SSH events parsed: 5
+SSH events parsed: 6
 Failed passwords: 2
 Invalid users: 2
 Accepted passwords: 1
-Disconnected: 1
+Accepted publickeys: 1
+Disconnected: 0
 
 Top failed source IPs
 - 198.51.100.10: 2
@@ -63,4 +64,5 @@ output. The rule counts both normal failed passwords and invalid-user attempts.
 - print text and JSON reports
 - keep fake sample logs for practice
 - flag repeated failed login sources
+- count accepted password and public-key logins separately
 - add more SSH event types over time
