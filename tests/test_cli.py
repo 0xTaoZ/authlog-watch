@@ -33,9 +33,11 @@ class CliTest(unittest.TestCase):
             text=True,
         )
 
-        self.assertIn("SSH events parsed: 6", result.stdout)
+        self.assertIn("SSH events parsed: 7", result.stdout)
+        self.assertIn("Invalid users: 3", result.stdout)
         self.assertIn("Accepted publickeys: 1", result.stdout)
         self.assertIn("198.51.100.10: 2", result.stdout)
+        self.assertIn("203.0.113.50: 3", result.stdout)
 
     def test_threshold_flag_prints_findings(self):
         result = subprocess.run(

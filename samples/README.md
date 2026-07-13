@@ -2,8 +2,10 @@
 
 The sample log is fake auth.log-style data for testing and practice.
 
-It includes failed SSH logins, invalid users, password and public-key successful
-logins, and one unrelated sudo line that the parser ignores.
+It includes failed SSH logins, a standalone invalid-user probe, password and
+public-key successful logins, and one unrelated sudo line that the parser
+ignores.
 
-Two source IPs have 2 failed SSH login events each. That makes the file useful
-for trying the repeated-failure rule with `--failed-threshold 2`.
+One source IP has 3 invalid-user or failed SSH login events, and another has 2.
+That makes the file useful for trying the repeated-failure rule with
+`--failed-threshold 2` or the default threshold of 3.

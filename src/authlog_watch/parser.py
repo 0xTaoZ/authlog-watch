@@ -15,6 +15,10 @@ FAILED_PASSWORD_RE = re.compile(
     r"(?P<user>\S+) from (?P<source_ip>\S+) port (?P<port>\d+)"
 )
 
+INVALID_USER_RE = re.compile(
+    r"^Invalid user (?P<user>\S+) from (?P<source_ip>\S+) port (?P<port>\d+)"
+)
+
 ACCEPTED_PASSWORD_RE = re.compile(
     r"^Accepted password for (?P<user>\S+) from (?P<source_ip>\S+) port (?P<port>\d+)"
 )
@@ -55,6 +59,15 @@ def parse_line(line: str) -> AuthEvent | None:
             prefix=prefix,
             match=failed,
             event_type="invalid_user" if failed.group("invalid") else "failed_password",
+            raw=line,
+        )
+
+    invalid_user = INVALID_USER_RE.match(message)
+    if invalid_user:
+        return make_event(
+            prefix=prefix,
+            match=invalid_user,
+            event_type="invalid_user",
             raw=line,
         )
 

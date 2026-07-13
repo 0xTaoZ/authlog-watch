@@ -23,6 +23,16 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(event.event_type, "invalid_user")
         self.assertEqual(event.user, "admin")
 
+    def test_parse_invalid_user_probe(self):
+        line = "Jul  1 08:17:40 lab sshd[1847]: Invalid user admin from 203.0.113.50 port 49151"
+
+        event = parse_line(line)
+
+        self.assertIsNotNone(event)
+        self.assertEqual(event.event_type, "invalid_user")
+        self.assertEqual(event.user, "admin")
+        self.assertEqual(event.source_ip, "203.0.113.50")
+
     def test_parse_accepted_password(self):
         line = "Jul  1 08:21:02 lab sshd[1850]: Accepted password for alice from 198.51.100.10 port 53330 ssh2"
 
