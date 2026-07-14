@@ -25,16 +25,18 @@ class ReportTest(unittest.TestCase):
             make_event("accepted_password", "alice", "198.51.100.10"),
             make_event("accepted_publickey", "deploy", "203.0.113.77"),
             make_event("disconnected", "root", "192.168.1.10"),
+            make_event("connection_closed", "git", "192.0.2.44"),
         ]
 
         summary = summarize_events(events)
 
-        self.assertEqual(summary.events_checked, 5)
+        self.assertEqual(summary.events_checked, 6)
         self.assertEqual(summary.failed_passwords, 1)
         self.assertEqual(summary.invalid_users, 1)
         self.assertEqual(summary.accepted_passwords, 1)
         self.assertEqual(summary.accepted_publickeys, 1)
         self.assertEqual(summary.disconnected, 1)
+        self.assertEqual(summary.connection_closed, 1)
 
     def test_summarize_events_tracks_top_failed_sources_and_users(self):
         events = [

@@ -32,6 +32,11 @@ DISCONNECTED_RE = re.compile(
     r"(?P<user>\S+) (?P<source_ip>\S+) port (?P<port>\d+)"
 )
 
+CONNECTION_CLOSED_RE = re.compile(
+    r"^Connection closed by (?:(?:invalid user|authenticating user|user)\s+)?"
+    r"(?P<user>\S+) (?P<source_ip>\S+) port (?P<port>\d+)"
+)
+
 
 def load_events(path: str | Path) -> list[AuthEvent]:
     lines = Path(path).read_text(encoding="utf-8").splitlines()
@@ -95,6 +100,15 @@ def parse_line(line: str) -> AuthEvent | None:
             prefix=prefix,
             match=disconnected,
             event_type="disconnected",
+            raw=line,
+        )
+
+    connection_closed = CONNECTION_CLOSED_RE.match(message)
+    if connection_closed:
+        return make_event(
+            prefix=prefix,
+            match=connection_closed,
+            event_type="connection_closed",
             raw=line,
         )
 

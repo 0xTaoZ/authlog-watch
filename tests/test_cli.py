@@ -33,9 +33,10 @@ class CliTest(unittest.TestCase):
             text=True,
         )
 
-        self.assertIn("SSH events parsed: 7", result.stdout)
+        self.assertIn("SSH events parsed: 8", result.stdout)
         self.assertIn("Invalid users: 3", result.stdout)
         self.assertIn("Accepted publickeys: 1", result.stdout)
+        self.assertIn("Connection closed: 1", result.stdout)
         self.assertIn("198.51.100.10: 2", result.stdout)
         self.assertIn("203.0.113.50: 3", result.stdout)
 
@@ -77,6 +78,7 @@ class CliTest(unittest.TestCase):
         )
 
         self.assertIn('"findings": [', result.stdout)
+        self.assertIn('"connection_closed": 1', result.stdout)
         self.assertIn('"rule_id": "repeated_failed_source"', result.stdout)
 
     def test_threshold_must_be_positive(self):

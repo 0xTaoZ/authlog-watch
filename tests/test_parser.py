@@ -81,6 +81,16 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(event.user, "alice")
         self.assertEqual(event.source_ip, "192.168.1.10")
 
+    def test_parse_connection_closed_authenticating_user(self):
+        line = "Jul  1 08:28:33 lab sshd[1857]: Connection closed by authenticating user root 192.0.2.44 port 40222 [preauth]"
+
+        event = parse_line(line)
+
+        self.assertIsNotNone(event)
+        self.assertEqual(event.event_type, "connection_closed")
+        self.assertEqual(event.user, "root")
+        self.assertEqual(event.source_ip, "192.0.2.44")
+
     def test_parse_lines_ignores_unknown_lines(self):
         lines = [
             "Jul  1 08:15:01 lab sudo: alice : TTY=pts/0 ; PWD=/home/alice ; USER=root ; COMMAND=/usr/bin/id",
