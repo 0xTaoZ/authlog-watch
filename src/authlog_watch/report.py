@@ -30,6 +30,7 @@ class AuthSummary:
     disconnected: int
     connection_closed: int
     top_source_ips: list[tuple[str, int]]
+    top_success_source_ips: list[tuple[str, int]]
     top_users: list[tuple[str, int]]
     findings: list[AuthFinding]
 
@@ -45,6 +46,10 @@ class AuthSummary:
             "top_source_ips": [
                 {"source_ip": source_ip, "count": count}
                 for source_ip, count in self.top_source_ips
+            ],
+            "top_success_source_ips": [
+                {"source_ip": source_ip, "count": count}
+                for source_ip, count in self.top_success_source_ips
             ],
             "top_users": [
                 {"user": user, "count": count}
@@ -65,6 +70,12 @@ def summarize_events(
         if event.event_type in {"failed_password", "invalid_user"}
     ]
     failed_source_counts = Counter(event.source_ip for event in failed_events)
+    success_events = [
+        event
+        for event in events
+        if event.event_type in {"accepted_password", "accepted_publickey"}
+    ]
+    success_source_counts = Counter(event.source_ip for event in success_events)
 
     return AuthSummary(
         events_checked=len(events),
@@ -75,6 +86,7 @@ def summarize_events(
         disconnected=count_type(events, "disconnected"),
         connection_closed=count_type(events, "connection_closed"),
         top_source_ips=failed_source_counts.most_common(limit),
+        top_success_source_ips=success_source_counts.most_common(limit),
         top_users=Counter(event.user for event in failed_events).most_common(limit),
         findings=make_failed_source_findings(failed_source_counts, failed_threshold),
     )

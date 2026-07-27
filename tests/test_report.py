@@ -51,6 +51,26 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(summary.top_source_ips[0], ("198.51.100.10", 2))
         self.assertEqual(summary.top_users[0], ("alice", 2))
 
+    def test_summarize_events_tracks_successful_login_sources(self):
+        events = [
+            make_event("accepted_password", "alice", "198.51.100.10"),
+            make_event("accepted_publickey", "deploy", "198.51.100.10"),
+            make_event("accepted_publickey", "backup", "203.0.113.77"),
+            make_event("failed_password", "root", "203.0.113.50"),
+        ]
+
+        summary = summarize_events(events)
+
+        self.assertEqual(summary.top_success_source_ips[0], ("198.51.100.10", 2))
+        self.assertEqual(summary.top_success_source_ips[1], ("203.0.113.77", 1))
+        self.assertEqual(
+            summary.to_dict()["top_success_source_ips"],
+            [
+                {"source_ip": "198.51.100.10", "count": 2},
+                {"source_ip": "203.0.113.77", "count": 1},
+            ],
+        )
+
     def test_summarize_events_flags_repeated_failed_sources(self):
         events = [
             make_event("failed_password", "alice", "198.51.100.10"),

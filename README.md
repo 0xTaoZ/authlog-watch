@@ -34,6 +34,10 @@ Top failed source IPs
 - 203.0.113.50: 3
 - 198.51.100.10: 2
 
+Successful login source IPs
+- 198.51.100.10: 1
+- 203.0.113.77: 1
+
 Top targeted users
 - alice: 2
 - admin: 2
@@ -67,5 +71,6 @@ output. The rule counts both normal failed passwords and invalid-user attempts.
 - flag repeated failed login sources
 - count standalone invalid-user probes before password checks
 - count accepted password and public-key logins separately
+- summarize successful login source IPs
 - count SSH connections closed during pre-authentication
 - add more SSH event types over time

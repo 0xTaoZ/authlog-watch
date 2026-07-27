@@ -48,6 +48,11 @@ def print_report(summary: AuthSummary) -> None:
         for source_ip, count in summary.top_source_ips:
             print(f"- {source_ip}: {count}")
 
+    if summary.top_success_source_ips:
+        print("\nSuccessful login source IPs")
+        for source_ip, count in summary.top_success_source_ips:
+            print(f"- {source_ip}: {count}")
+
     if summary.top_users:
         print("\nTop targeted users")
         for user, count in summary.top_users:

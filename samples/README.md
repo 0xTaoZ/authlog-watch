@@ -9,3 +9,6 @@ and one unrelated sudo line that the parser ignores.
 One source IP has 3 invalid-user or failed SSH login events, and another has 2.
 That makes the file useful for trying the repeated-failure rule with
 `--failed-threshold 2` or the default threshold of 3.
+
+The successful password and public-key login lines also let the report show
+which source IPs actually got SSH access.
