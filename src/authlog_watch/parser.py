@@ -37,6 +37,10 @@ CONNECTION_CLOSED_RE = re.compile(
     r"(?P<user>\S+) (?P<source_ip>\S+) port (?P<port>\d+)"
 )
 
+RECEIVED_DISCONNECT_RE = re.compile(
+    r"^Received disconnect from (?P<source_ip>\S+) port (?P<port>\d+):"
+)
+
 
 def load_events(path: str | Path) -> list[AuthEvent]:
     lines = Path(path).read_text(encoding="utf-8").splitlines()
@@ -109,6 +113,19 @@ def parse_line(line: str) -> AuthEvent | None:
             prefix=prefix,
             match=connection_closed,
             event_type="connection_closed",
+            raw=line,
+        )
+
+    received_disconnect = RECEIVED_DISCONNECT_RE.match(message)
+    if received_disconnect:
+        return AuthEvent(
+            timestamp=prefix.group("timestamp"),
+            host=prefix.group("host"),
+            service=prefix.group("service"),
+            event_type="received_disconnect",
+            user="-",
+            source_ip=received_disconnect.group("source_ip"),
+            port=received_disconnect.group("port"),
             raw=line,
         )
 

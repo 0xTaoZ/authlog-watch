@@ -29,6 +29,7 @@ class AuthSummary:
     accepted_publickeys: int
     disconnected: int
     connection_closed: int
+    received_disconnects: int
     top_source_ips: list[tuple[str, int]]
     top_success_source_ips: list[tuple[str, int]]
     top_users: list[tuple[str, int]]
@@ -43,6 +44,7 @@ class AuthSummary:
             "accepted_publickeys": self.accepted_publickeys,
             "disconnected": self.disconnected,
             "connection_closed": self.connection_closed,
+            "received_disconnects": self.received_disconnects,
             "top_source_ips": [
                 {"source_ip": source_ip, "count": count}
                 for source_ip, count in self.top_source_ips
@@ -85,6 +87,7 @@ def summarize_events(
         accepted_publickeys=count_type(events, "accepted_publickey"),
         disconnected=count_type(events, "disconnected"),
         connection_closed=count_type(events, "connection_closed"),
+        received_disconnects=count_type(events, "received_disconnect"),
         top_source_ips=failed_source_counts.most_common(limit),
         top_success_source_ips=success_source_counts.most_common(limit),
         top_users=Counter(event.user for event in failed_events).most_common(limit),

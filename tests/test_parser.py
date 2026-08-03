@@ -91,6 +91,17 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(event.user, "root")
         self.assertEqual(event.source_ip, "192.0.2.44")
 
+    def test_parse_received_disconnect_preauth(self):
+        line = "Jul  1 08:29:01 lab sshd[1858]: Received disconnect from 192.0.2.45 port 40404:11: Bye Bye [preauth]"
+
+        event = parse_line(line)
+
+        self.assertIsNotNone(event)
+        self.assertEqual(event.event_type, "received_disconnect")
+        self.assertEqual(event.user, "-")
+        self.assertEqual(event.source_ip, "192.0.2.45")
+        self.assertEqual(event.port, "40404")
+
     def test_parse_lines_ignores_unknown_lines(self):
         lines = [
             "Jul  1 08:15:01 lab sudo: alice : TTY=pts/0 ; PWD=/home/alice ; USER=root ; COMMAND=/usr/bin/id",
