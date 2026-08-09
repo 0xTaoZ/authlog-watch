@@ -73,6 +73,26 @@ class ReportTest(unittest.TestCase):
             ],
         )
 
+    def test_summarize_events_tracks_preauth_disconnect_sources(self):
+        events = [
+            make_event("connection_closed", "root", "192.0.2.44"),
+            make_event("received_disconnect", "-", "192.0.2.44"),
+            make_event("received_disconnect", "-", "192.0.2.45"),
+            make_event("failed_password", "alice", "198.51.100.10"),
+        ]
+
+        summary = summarize_events(events)
+
+        self.assertEqual(summary.top_preauth_source_ips[0], ("192.0.2.44", 2))
+        self.assertEqual(summary.top_preauth_source_ips[1], ("192.0.2.45", 1))
+        self.assertEqual(
+            summary.to_dict()["top_preauth_source_ips"],
+            [
+                {"source_ip": "192.0.2.44", "count": 2},
+                {"source_ip": "192.0.2.45", "count": 1},
+            ],
+        )
+
     def test_summarize_events_flags_repeated_failed_sources(self):
         events = [
             make_event("failed_password", "alice", "198.51.100.10"),

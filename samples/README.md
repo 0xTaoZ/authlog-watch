@@ -13,3 +13,7 @@ That makes the file useful for trying the repeated-failure rule with
 
 The successful password and public-key login lines also let the report show
 which source IPs actually got SSH access.
+
+The pre-authentication connection-close and received-disconnect lines use
+different fake source IPs, so the report can show quick source counts for
+disconnect noise before a login succeeds or fails.

@@ -39,10 +39,17 @@ Successful login source IPs
 - 198.51.100.10: 1
 - 203.0.113.77: 1
 
+Pre-auth disconnect source IPs
+- 192.0.2.44: 1
+- 192.0.2.45: 1
+
 Top targeted users
 - alice: 2
 - admin: 2
 - test: 1
+
+Findings
+- repeated_failed_source: 203.0.113.50 had 3 failed SSH login events (threshold: 3)
 ```
 
 JSON output is available for small scripts:
@@ -75,4 +82,5 @@ output. The rule counts both normal failed passwords and invalid-user attempts.
 - summarize successful login source IPs
 - count SSH connections closed during pre-authentication
 - count SSH received-disconnect pre-authentication events
+- summarize pre-authentication disconnect source IPs
 - add more SSH event types over time

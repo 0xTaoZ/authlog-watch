@@ -42,6 +42,9 @@ class CliTest(unittest.TestCase):
         self.assertIn("203.0.113.50: 3", result.stdout)
         self.assertIn("Successful login source IPs", result.stdout)
         self.assertIn("203.0.113.77: 1", result.stdout)
+        self.assertIn("Pre-auth disconnect source IPs", result.stdout)
+        self.assertIn("192.0.2.44: 1", result.stdout)
+        self.assertIn("192.0.2.45: 1", result.stdout)
 
     def test_threshold_flag_prints_findings(self):
         result = subprocess.run(
@@ -84,6 +87,7 @@ class CliTest(unittest.TestCase):
         self.assertIn('"connection_closed": 1', result.stdout)
         self.assertIn('"received_disconnects": 1', result.stdout)
         self.assertIn('"top_success_source_ips": [', result.stdout)
+        self.assertIn('"top_preauth_source_ips": [', result.stdout)
         self.assertIn('"rule_id": "repeated_failed_source"', result.stdout)
 
     def test_threshold_must_be_positive(self):
