@@ -33,11 +33,12 @@ class CliTest(unittest.TestCase):
             text=True,
         )
 
-        self.assertIn("SSH events parsed: 9", result.stdout)
+        self.assertIn("SSH events parsed: 10", result.stdout)
         self.assertIn("Invalid users: 3", result.stdout)
         self.assertIn("Accepted publickeys: 1", result.stdout)
         self.assertIn("Connection closed: 1", result.stdout)
         self.assertIn("Received disconnects: 1", result.stdout)
+        self.assertIn("Unable to negotiate: 1", result.stdout)
         self.assertIn("198.51.100.10: 2", result.stdout)
         self.assertIn("203.0.113.50: 3", result.stdout)
         self.assertIn("Successful login source IPs", result.stdout)
@@ -45,6 +46,7 @@ class CliTest(unittest.TestCase):
         self.assertIn("Pre-auth disconnect source IPs", result.stdout)
         self.assertIn("192.0.2.44: 1", result.stdout)
         self.assertIn("192.0.2.45: 1", result.stdout)
+        self.assertIn("203.0.113.88: 1", result.stdout)
 
     def test_threshold_flag_prints_findings(self):
         result = subprocess.run(
@@ -86,6 +88,7 @@ class CliTest(unittest.TestCase):
         self.assertIn('"findings": [', result.stdout)
         self.assertIn('"connection_closed": 1', result.stdout)
         self.assertIn('"received_disconnects": 1', result.stdout)
+        self.assertIn('"unable_to_negotiate": 1', result.stdout)
         self.assertIn('"top_success_source_ips": [', result.stdout)
         self.assertIn('"top_preauth_source_ips": [', result.stdout)
         self.assertIn('"rule_id": "repeated_failed_source"', result.stdout)

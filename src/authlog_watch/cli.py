@@ -43,6 +43,7 @@ def print_report(summary: AuthSummary) -> None:
     print(f"Disconnected: {summary.disconnected}")
     print(f"Connection closed: {summary.connection_closed}")
     print(f"Received disconnects: {summary.received_disconnects}")
+    print(f"Unable to negotiate: {summary.unable_to_negotiate}")
 
     if summary.top_source_ips:
         print("\nTop failed source IPs")

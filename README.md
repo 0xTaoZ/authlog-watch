@@ -22,7 +22,7 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 
 ```text
 authlog-watch
-SSH events parsed: 9
+SSH events parsed: 10
 Failed passwords: 2
 Invalid users: 3
 Accepted passwords: 1
@@ -30,6 +30,7 @@ Accepted publickeys: 1
 Disconnected: 0
 Connection closed: 1
 Received disconnects: 1
+Unable to negotiate: 1
 
 Top failed source IPs
 - 203.0.113.50: 3
@@ -42,6 +43,7 @@ Successful login source IPs
 Pre-auth disconnect source IPs
 - 192.0.2.44: 1
 - 192.0.2.45: 1
+- 203.0.113.88: 1
 
 Top targeted users
 - alice: 2
@@ -82,5 +84,6 @@ output. The rule counts both normal failed passwords and invalid-user attempts.
 - summarize successful login source IPs
 - count SSH connections closed during pre-authentication
 - count SSH received-disconnect pre-authentication events
+- count SSH negotiation failures before authentication
 - summarize pre-authentication disconnect source IPs
 - add more SSH event types over time

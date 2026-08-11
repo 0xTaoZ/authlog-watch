@@ -41,6 +41,10 @@ RECEIVED_DISCONNECT_RE = re.compile(
     r"^Received disconnect from (?P<source_ip>\S+) port (?P<port>\d+):"
 )
 
+UNABLE_TO_NEGOTIATE_RE = re.compile(
+    r"^Unable to negotiate with (?P<source_ip>\S+) port (?P<port>\d+):"
+)
+
 
 def load_events(path: str | Path) -> list[AuthEvent]:
     lines = Path(path).read_text(encoding="utf-8").splitlines()
@@ -126,6 +130,19 @@ def parse_line(line: str) -> AuthEvent | None:
             user="-",
             source_ip=received_disconnect.group("source_ip"),
             port=received_disconnect.group("port"),
+            raw=line,
+        )
+
+    unable_to_negotiate = UNABLE_TO_NEGOTIATE_RE.match(message)
+    if unable_to_negotiate:
+        return AuthEvent(
+            timestamp=prefix.group("timestamp"),
+            host=prefix.group("host"),
+            service=prefix.group("service"),
+            event_type="unable_to_negotiate",
+            user="-",
+            source_ip=unable_to_negotiate.group("source_ip"),
+            port=unable_to_negotiate.group("port"),
             raw=line,
         )
 

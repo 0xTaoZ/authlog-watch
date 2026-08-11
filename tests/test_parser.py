@@ -102,6 +102,17 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(event.source_ip, "192.0.2.45")
         self.assertEqual(event.port, "40404")
 
+    def test_parse_unable_to_negotiate(self):
+        line = "Jul  1 08:30:02 lab sshd[1859]: Unable to negotiate with 203.0.113.88 port 50022: no matching key exchange method found. Their offer: diffie-hellman-group1-sha1 [preauth]"
+
+        event = parse_line(line)
+
+        self.assertIsNotNone(event)
+        self.assertEqual(event.event_type, "unable_to_negotiate")
+        self.assertEqual(event.user, "-")
+        self.assertEqual(event.source_ip, "203.0.113.88")
+        self.assertEqual(event.port, "50022")
+
     def test_parse_lines_ignores_unknown_lines(self):
         lines = [
             "Jul  1 08:15:01 lab sudo: alice : TTY=pts/0 ; PWD=/home/alice ; USER=root ; COMMAND=/usr/bin/id",

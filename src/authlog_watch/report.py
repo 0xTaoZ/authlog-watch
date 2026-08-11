@@ -30,6 +30,7 @@ class AuthSummary:
     disconnected: int
     connection_closed: int
     received_disconnects: int
+    unable_to_negotiate: int
     top_source_ips: list[tuple[str, int]]
     top_success_source_ips: list[tuple[str, int]]
     top_preauth_source_ips: list[tuple[str, int]]
@@ -46,6 +47,7 @@ class AuthSummary:
             "disconnected": self.disconnected,
             "connection_closed": self.connection_closed,
             "received_disconnects": self.received_disconnects,
+            "unable_to_negotiate": self.unable_to_negotiate,
             "top_source_ips": [
                 {"source_ip": source_ip, "count": count}
                 for source_ip, count in self.top_source_ips
@@ -86,7 +88,11 @@ def summarize_events(
     preauth_events = [
         event
         for event in events
-        if event.event_type in {"connection_closed", "received_disconnect"}
+        if event.event_type in {
+            "connection_closed",
+            "received_disconnect",
+            "unable_to_negotiate",
+        }
     ]
     preauth_source_counts = Counter(event.source_ip for event in preauth_events)
 
@@ -99,6 +105,7 @@ def summarize_events(
         disconnected=count_type(events, "disconnected"),
         connection_closed=count_type(events, "connection_closed"),
         received_disconnects=count_type(events, "received_disconnect"),
+        unable_to_negotiate=count_type(events, "unable_to_negotiate"),
         top_source_ips=failed_source_counts.most_common(limit),
         top_success_source_ips=success_source_counts.most_common(limit),
         top_preauth_source_ips=preauth_source_counts.most_common(limit),

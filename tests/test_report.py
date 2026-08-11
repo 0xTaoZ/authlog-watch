@@ -27,11 +27,12 @@ class ReportTest(unittest.TestCase):
             make_event("disconnected", "root", "192.168.1.10"),
             make_event("connection_closed", "git", "192.0.2.44"),
             make_event("received_disconnect", "-", "192.0.2.45"),
+            make_event("unable_to_negotiate", "-", "203.0.113.88"),
         ]
 
         summary = summarize_events(events)
 
-        self.assertEqual(summary.events_checked, 7)
+        self.assertEqual(summary.events_checked, 8)
         self.assertEqual(summary.failed_passwords, 1)
         self.assertEqual(summary.invalid_users, 1)
         self.assertEqual(summary.accepted_passwords, 1)
@@ -39,6 +40,7 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(summary.disconnected, 1)
         self.assertEqual(summary.connection_closed, 1)
         self.assertEqual(summary.received_disconnects, 1)
+        self.assertEqual(summary.unable_to_negotiate, 1)
 
     def test_summarize_events_tracks_top_failed_sources_and_users(self):
         events = [
@@ -77,18 +79,19 @@ class ReportTest(unittest.TestCase):
         events = [
             make_event("connection_closed", "root", "192.0.2.44"),
             make_event("received_disconnect", "-", "192.0.2.44"),
+            make_event("unable_to_negotiate", "-", "192.0.2.44"),
             make_event("received_disconnect", "-", "192.0.2.45"),
             make_event("failed_password", "alice", "198.51.100.10"),
         ]
 
         summary = summarize_events(events)
 
-        self.assertEqual(summary.top_preauth_source_ips[0], ("192.0.2.44", 2))
+        self.assertEqual(summary.top_preauth_source_ips[0], ("192.0.2.44", 3))
         self.assertEqual(summary.top_preauth_source_ips[1], ("192.0.2.45", 1))
         self.assertEqual(
             summary.to_dict()["top_preauth_source_ips"],
             [
-                {"source_ip": "192.0.2.44", "count": 2},
+                {"source_ip": "192.0.2.44", "count": 3},
                 {"source_ip": "192.0.2.45", "count": 1},
             ],
         )
