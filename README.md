@@ -52,6 +52,7 @@ Top targeted users
 
 Findings
 - repeated_failed_source: 203.0.113.50 had 3 failed SSH login events (threshold: 3)
+- mixed_auth_outcome_source: 198.51.100.10 had 2 failed and 1 successful SSH login events
 ```
 
 JSON output is available for small scripts:
@@ -72,6 +73,11 @@ PYTHONPATH=src python3 -m authlog_watch samples/auth.log --failed-threshold 2
 That adds a `Findings` section to the text report and a `findings` list to JSON
 output. The rule counts both normal failed passwords and invalid-user attempts.
 
+The report also flags a source IP when it has both failed and successful SSH
+login events. That does not prove compromise by itself, but it is a useful
+small clue when reviewing lab logs or looking for noisy login attempts followed
+by a real session.
+
 ## Current plan
 
 - parse common SSH login events
@@ -79,6 +85,7 @@ output. The rule counts both normal failed passwords and invalid-user attempts.
 - print text and JSON reports
 - keep fake sample logs for practice
 - flag repeated failed login sources
+- flag source IPs with both failed and successful SSH login events
 - count standalone invalid-user probes before password checks
 - count accepted password and public-key logins separately
 - summarize successful login source IPs

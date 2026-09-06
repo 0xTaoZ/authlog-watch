@@ -47,6 +47,7 @@ class CliTest(unittest.TestCase):
         self.assertIn("192.0.2.44: 1", result.stdout)
         self.assertIn("192.0.2.45: 1", result.stdout)
         self.assertIn("203.0.113.88: 1", result.stdout)
+        self.assertIn("mixed_auth_outcome_source", result.stdout)
 
     def test_threshold_flag_prints_findings(self):
         result = subprocess.run(
@@ -92,6 +93,8 @@ class CliTest(unittest.TestCase):
         self.assertIn('"top_success_source_ips": [', result.stdout)
         self.assertIn('"top_preauth_source_ips": [', result.stdout)
         self.assertIn('"rule_id": "repeated_failed_source"', result.stdout)
+        self.assertIn('"rule_id": "mixed_auth_outcome_source"', result.stdout)
+        self.assertIn('"success_count": 1', result.stdout)
 
     def test_threshold_must_be_positive(self):
         result = subprocess.run(

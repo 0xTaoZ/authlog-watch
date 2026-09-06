@@ -10,14 +10,18 @@ class AuthFinding:
     source_ip: str
     failed_count: int
     message: str
+    success_count: int | None = None
 
     def to_dict(self) -> dict[str, object]:
-        return {
+        finding = {
             "rule_id": self.rule_id,
             "source_ip": self.source_ip,
             "failed_count": self.failed_count,
             "message": self.message,
         }
+        if self.success_count is not None:
+            finding["success_count"] = self.success_count
+        return finding
 
 
 @dataclass(frozen=True)
@@ -110,7 +114,10 @@ def summarize_events(
         top_success_source_ips=success_source_counts.most_common(limit),
         top_preauth_source_ips=preauth_source_counts.most_common(limit),
         top_users=Counter(event.user for event in failed_events).most_common(limit),
-        findings=make_failed_source_findings(failed_source_counts, failed_threshold),
+        findings=[
+            *make_failed_source_findings(failed_source_counts, failed_threshold),
+            *make_mixed_outcome_findings(failed_source_counts, success_source_counts),
+        ],
     )
 
 
@@ -138,6 +145,31 @@ def make_failed_source_findings(
                 message=(
                     f"{source_ip} had {failed_count} failed SSH login events "
                     f"(threshold: {failed_threshold})"
+                ),
+            )
+        )
+    return findings
+
+
+def make_mixed_outcome_findings(
+    failed_source_counts: Counter[str],
+    success_source_counts: Counter[str],
+) -> list[AuthFinding]:
+    findings: list[AuthFinding] = []
+    for source_ip, failed_count in failed_source_counts.most_common():
+        success_count = success_source_counts[source_ip]
+        if success_count == 0:
+            continue
+
+        findings.append(
+            AuthFinding(
+                rule_id="mixed_auth_outcome_source",
+                source_ip=source_ip,
+                failed_count=failed_count,
+                success_count=success_count,
+                message=(
+                    f"{source_ip} had {failed_count} failed and "
+                    f"{success_count} successful SSH login events"
                 ),
             )
         )

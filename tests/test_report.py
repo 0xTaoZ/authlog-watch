@@ -110,6 +110,26 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(summary.findings[0].source_ip, "198.51.100.10")
         self.assertEqual(summary.findings[0].failed_count, 2)
 
+    def test_summarize_events_flags_mixed_auth_outcome_sources(self):
+        events = [
+            make_event("failed_password", "alice", "198.51.100.10"),
+            make_event("failed_password", "alice", "198.51.100.10"),
+            make_event("accepted_password", "alice", "198.51.100.10"),
+            make_event("accepted_publickey", "deploy", "203.0.113.77"),
+        ]
+
+        summary = summarize_events(events, failed_threshold=3)
+
+        self.assertEqual(len(summary.findings), 1)
+        self.assertEqual(summary.findings[0].rule_id, "mixed_auth_outcome_source")
+        self.assertEqual(summary.findings[0].source_ip, "198.51.100.10")
+        self.assertEqual(summary.findings[0].failed_count, 2)
+        self.assertEqual(summary.findings[0].success_count, 1)
+        self.assertEqual(
+            summary.findings[0].to_dict()["success_count"],
+            1,
+        )
+
     def test_summarize_events_rejects_invalid_threshold(self):
         with self.assertRaises(ValueError):
             summarize_events([], failed_threshold=0)

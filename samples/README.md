@@ -12,7 +12,8 @@ That makes the file useful for trying the repeated-failure rule with
 `--failed-threshold 2` or the default threshold of 3.
 
 The successful password and public-key login lines also let the report show
-which source IPs actually got SSH access.
+which source IPs actually got SSH access. One source IP has both failed and
+successful events, so the report can show a mixed-outcome finding.
 
 The pre-authentication connection-close, received-disconnect, and negotiation
 failure lines use different fake source IPs, so the report can show quick
