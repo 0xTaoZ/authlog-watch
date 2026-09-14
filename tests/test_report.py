@@ -75,6 +75,26 @@ class ReportTest(unittest.TestCase):
             ],
         )
 
+    def test_summarize_events_tracks_successful_login_users(self):
+        events = [
+            make_event("accepted_password", "alice", "198.51.100.10"),
+            make_event("accepted_publickey", "alice", "203.0.113.77"),
+            make_event("accepted_publickey", "deploy", "203.0.113.77"),
+            make_event("failed_password", "root", "203.0.113.50"),
+        ]
+
+        summary = summarize_events(events)
+
+        self.assertEqual(summary.top_success_users[0], ("alice", 2))
+        self.assertEqual(summary.top_success_users[1], ("deploy", 1))
+        self.assertEqual(
+            summary.to_dict()["top_success_users"],
+            [
+                {"user": "alice", "count": 2},
+                {"user": "deploy", "count": 1},
+            ],
+        )
+
     def test_summarize_events_tracks_preauth_disconnect_sources(self):
         events = [
             make_event("connection_closed", "root", "192.0.2.44"),

@@ -37,6 +37,7 @@ class AuthSummary:
     unable_to_negotiate: int
     top_source_ips: list[tuple[str, int]]
     top_success_source_ips: list[tuple[str, int]]
+    top_success_users: list[tuple[str, int]]
     top_preauth_source_ips: list[tuple[str, int]]
     top_users: list[tuple[str, int]]
     findings: list[AuthFinding]
@@ -59,6 +60,10 @@ class AuthSummary:
             "top_success_source_ips": [
                 {"source_ip": source_ip, "count": count}
                 for source_ip, count in self.top_success_source_ips
+            ],
+            "top_success_users": [
+                {"user": user, "count": count}
+                for user, count in self.top_success_users
             ],
             "top_preauth_source_ips": [
                 {"source_ip": source_ip, "count": count}
@@ -112,6 +117,7 @@ def summarize_events(
         unable_to_negotiate=count_type(events, "unable_to_negotiate"),
         top_source_ips=failed_source_counts.most_common(limit),
         top_success_source_ips=success_source_counts.most_common(limit),
+        top_success_users=Counter(event.user for event in success_events).most_common(limit),
         top_preauth_source_ips=preauth_source_counts.most_common(limit),
         top_users=Counter(event.user for event in failed_events).most_common(limit),
         findings=[

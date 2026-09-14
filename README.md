@@ -40,6 +40,10 @@ Successful login source IPs
 - 198.51.100.10: 1
 - 203.0.113.77: 1
 
+Successful login users
+- alice: 1
+- deploy: 1
+
 Pre-auth disconnect source IPs
 - 192.0.2.44: 1
 - 192.0.2.45: 1
@@ -89,6 +93,7 @@ by a real session.
 - count standalone invalid-user probes before password checks
 - count accepted password and public-key logins separately
 - summarize successful login source IPs
+- summarize successful login users
 - count SSH connections closed during pre-authentication
 - count SSH received-disconnect pre-authentication events
 - count SSH negotiation failures before authentication
