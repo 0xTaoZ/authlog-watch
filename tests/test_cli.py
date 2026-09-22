@@ -71,6 +71,27 @@ class CliTest(unittest.TestCase):
         self.assertIn("repeated_failed_source", result.stdout)
         self.assertIn("threshold: 2", result.stdout)
 
+    def test_limit_caps_top_sections(self):
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "authlog_watch",
+                str(SAMPLE_LOG),
+                "--limit",
+                "1",
+            ],
+            check=True,
+            capture_output=True,
+            env={"PYTHONPATH": str(PROJECT_ROOT / "src")},
+            text=True,
+        )
+
+        self.assertIn("203.0.113.50: 3", result.stdout)
+        self.assertNotIn("198.51.100.10: 2", result.stdout)
+        self.assertIn("Successful login source IPs\n- 198.51.100.10: 1", result.stdout)
+        self.assertNotIn("203.0.113.77: 1", result.stdout)
+
     def test_json_output_includes_findings(self):
         result = subprocess.run(
             [
@@ -107,6 +128,24 @@ class CliTest(unittest.TestCase):
                 "authlog_watch",
                 str(SAMPLE_LOG),
                 "--failed-threshold",
+                "0",
+            ],
+            capture_output=True,
+            env={"PYTHONPATH": str(PROJECT_ROOT / "src")},
+            text=True,
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("must be at least 1", result.stderr)
+
+    def test_limit_must_be_positive(self):
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "authlog_watch",
+                str(SAMPLE_LOG),
+                "--limit",
                 "0",
             ],
             capture_output=True,

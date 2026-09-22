@@ -22,10 +22,20 @@ def main() -> None:
         default=3,
         help="Flag source IPs with this many failed SSH login events",
     )
+    parser.add_argument(
+        "--limit",
+        type=positive_int,
+        default=5,
+        help="Limit each top summary section to this many rows",
+    )
     args = parser.parse_args()
 
     events = load_events(args.path)
-    summary = summarize_events(events, failed_threshold=args.failed_threshold)
+    summary = summarize_events(
+        events,
+        limit=args.limit,
+        failed_threshold=args.failed_threshold,
+    )
 
     if args.json:
         print(json.dumps(summary.to_dict(), indent=2))

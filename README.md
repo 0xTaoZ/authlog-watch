@@ -82,6 +82,12 @@ login events. That does not prove compromise by itself, but it is a useful
 small clue when reviewing lab logs or looking for noisy login attempts followed
 by a real session.
 
+Limit each top summary section when reviewing noisy logs:
+
+```bash
+PYTHONPATH=src python3 -m authlog_watch samples/auth.log --limit 3
+```
+
 ## Current plan
 
 - parse common SSH login events
@@ -98,4 +104,5 @@ by a real session.
 - count SSH received-disconnect pre-authentication events
 - count SSH negotiation failures before authentication
 - summarize pre-authentication disconnect source IPs
+- limit top summary sections for noisy logs
 - add more SSH event types over time
