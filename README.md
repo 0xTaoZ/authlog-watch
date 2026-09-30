@@ -88,6 +88,14 @@ Limit each top summary section when reviewing noisy logs:
 PYTHONPATH=src python3 -m authlog_watch samples/auth.log --limit 3
 ```
 
+Print only the event counts when you do not need ranked details or findings:
+
+```bash
+PYTHONPATH=src python3 -m authlog_watch samples/auth.log --summary-only
+```
+
+`--summary-only` is a text output mode and cannot be combined with `--json`.
+
 ## Current plan
 
 - parse common SSH login events
@@ -105,4 +113,5 @@ PYTHONPATH=src python3 -m authlog_watch samples/auth.log --limit 3
 - count SSH negotiation failures before authentication
 - summarize pre-authentication disconnect source IPs
 - limit top summary sections for noisy logs
+- print event counts without detail sections
 - add more SSH event types over time

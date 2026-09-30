@@ -11,10 +11,16 @@ def main() -> None:
         description="Review Linux auth.log SSH events.",
     )
     parser.add_argument("path", help="Path to an auth.log-style file")
-    parser.add_argument(
+    output_group = parser.add_mutually_exclusive_group()
+    output_group.add_argument(
         "--json",
         action="store_true",
         help="Print the summary as JSON for scripts",
+    )
+    output_group.add_argument(
+        "--summary-only",
+        action="store_true",
+        help="Print only event counts",
     )
     parser.add_argument(
         "--failed-threshold",
@@ -40,10 +46,10 @@ def main() -> None:
     if args.json:
         print(json.dumps(summary.to_dict(), indent=2))
     else:
-        print_report(summary)
+        print_report(summary, summary_only=args.summary_only)
 
 
-def print_report(summary: AuthSummary) -> None:
+def print_report(summary: AuthSummary, summary_only: bool = False) -> None:
     print("authlog-watch")
     print(f"SSH events parsed: {summary.events_checked}")
     print(f"Failed passwords: {summary.failed_passwords}")
@@ -54,6 +60,9 @@ def print_report(summary: AuthSummary) -> None:
     print(f"Connection closed: {summary.connection_closed}")
     print(f"Received disconnects: {summary.received_disconnects}")
     print(f"Unable to negotiate: {summary.unable_to_negotiate}")
+
+    if summary_only:
+        return
 
     if summary.top_source_ips:
         print("\nTop failed source IPs")

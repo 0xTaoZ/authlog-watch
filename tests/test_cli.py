@@ -92,6 +92,45 @@ class CliTest(unittest.TestCase):
         self.assertIn("Successful login source IPs\n- 198.51.100.10: 1", result.stdout)
         self.assertNotIn("203.0.113.77: 1", result.stdout)
 
+    def test_summary_only_hides_detail_sections(self):
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "authlog_watch",
+                str(SAMPLE_LOG),
+                "--summary-only",
+            ],
+            capture_output=True,
+            env={"PYTHONPATH": str(PROJECT_ROOT / "src")},
+            text=True,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("SSH events parsed: 10", result.stdout)
+        self.assertIn("Accepted publickeys: 1", result.stdout)
+        self.assertNotIn("Top failed source IPs", result.stdout)
+        self.assertNotIn("Successful login users", result.stdout)
+        self.assertNotIn("Findings", result.stdout)
+
+    def test_summary_only_cannot_be_combined_with_json(self):
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "authlog_watch",
+                str(SAMPLE_LOG),
+                "--summary-only",
+                "--json",
+            ],
+            capture_output=True,
+            env={"PYTHONPATH": str(PROJECT_ROOT / "src")},
+            text=True,
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("not allowed with argument", result.stderr)
+
     def test_json_output_includes_findings(self):
         result = subprocess.run(
             [
