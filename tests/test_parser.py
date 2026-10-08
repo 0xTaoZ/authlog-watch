@@ -14,6 +14,29 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(event.user, "alice")
         self.assertEqual(event.source_ip, "198.51.100.10")
 
+    def test_parse_rfc3339_timestamp_and_sshd_session(self):
+        lines = [
+            "2026-10-08T03:00:01.123456+02:00 lab sshd[1842]: Failed password for alice from 198.51.100.10 port 53321 ssh2",
+            "2026-10-08T03:00:05.654321+02:00 lab sshd-session[1850]: Failed password for invalid user admin from 203.0.113.50 port 49152 ssh2",
+            "2026-10-08T01:00:09Z lab sshd-session[1851]: Accepted publickey for deploy from 2001:db8::7 port 50022 ssh2: ED25519 SHA256:abc",
+            "2026-10-08T03:00:12+02:00 lab sshd-auth[1852]: Invalid user test from 203.0.113.51 port 49160",
+        ]
+
+        events = parse_lines(lines)
+
+        self.assertEqual(
+            [event.event_type for event in events],
+            ["failed_password", "invalid_user", "accepted_publickey", "invalid_user"],
+        )
+        self.assertEqual(events[0].timestamp, "2026-10-08T03:00:01.123456+02:00")
+        self.assertEqual(events[1].service, "sshd-session")
+        self.assertEqual(events[2].source_ip, "2001:db8::7")
+
+    def test_ignores_other_programs_with_sshd_prefix(self):
+        line = "Jul  1 08:15:01 lab sshd-keygen[90]: Failed password for alice from 198.51.100.10 port 53321 ssh2"
+
+        self.assertIsNone(parse_line(line))
+
     def test_parse_invalid_user(self):
         line = "Jul  1 08:17:44 lab sshd[1848]: Failed password for invalid user admin from 203.0.113.50 port 49152 ssh2"
 

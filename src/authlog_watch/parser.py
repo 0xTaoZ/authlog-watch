@@ -3,10 +3,15 @@ from pathlib import Path
 
 from .models import AuthEvent
 
+# rsyslog writes either the classic "Oct  8 03:00:01" timestamp or, by default
+# since Debian 12 and Ubuntu 23.10, RFC 3339 ("2026-10-08T03:00:01.123456+02:00").
+# OpenSSH 9.8 moved per-connection logging into sshd-session, and 10.0 added
+# sshd-auth, so the program name is no longer always "sshd".
 PREFIX_RE = re.compile(
-    r"^(?P<timestamp>\w{3}\s+\d+\s+\d\d:\d\d:\d\d)\s+"
+    r"^(?P<timestamp>\w{3}\s+\d+\s+\d\d:\d\d:\d\d"
+    r"|\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?(?:Z|[+-]\d\d:\d\d))\s+"
     r"(?P<host>\S+)\s+"
-    r"(?P<service>sshd)\[(?P<pid>\d+)\]:\s+"
+    r"(?P<service>sshd(?:-session|-auth)?)\[(?P<pid>\d+)\]:\s+"
     r"(?P<message>.*)$"
 )
 

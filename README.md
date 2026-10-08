@@ -4,6 +4,8 @@ A small Python tool for reviewing Linux SSH authentication logs.
 
 It reads auth.log-style lines, groups common SSH events, and prints a short triage report. The goal is to practice blue-team log review with simple code that can be read in one sitting.
 
+Both rsyslog timestamp styles are read: the classic `Oct  8 03:00:01` and the RFC 3339 format that Debian 12 and Ubuntu 23.10 and later write by default (`2026-10-08T03:00:01.123456+02:00`). Lines from `sshd-session` and `sshd-auth`, which OpenSSH 9.8 and 10.0 use for per-connection logging, are read as well as `sshd`.
+
 This is a learning project, not a replacement for a SIEM.
 
 ## Quick start
