@@ -38,8 +38,8 @@ DISCONNECTED_RE = re.compile(
 )
 
 CONNECTION_CLOSED_RE = re.compile(
-    r"^Connection closed by (?:(?:invalid user|authenticating user|user)\s+)?"
-    r"(?P<user>\S+) (?P<source_ip>\S+) port (?P<port>\d+)"
+    r"^Connection closed by (?:(?:(?:invalid user|authenticating user|user)\s+)?"
+    r"(?P<user>\S+) )?(?P<source_ip>\S+) port (?P<port>\d+)"
 )
 
 RECEIVED_DISCONNECT_RE = re.compile(
@@ -160,7 +160,7 @@ def make_event(prefix: re.Match[str], match: re.Match[str], event_type: str, raw
         host=prefix.group("host"),
         service=prefix.group("service"),
         event_type=event_type,
-        user=match.group("user"),
+        user=match.group("user") or "-",
         source_ip=match.group("source_ip"),
         port=match.group("port"),
         raw=raw,

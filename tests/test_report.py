@@ -1,6 +1,7 @@
 import unittest
 
 from authlog_watch.models import AuthEvent
+from authlog_watch.parser import parse_lines
 from authlog_watch.report import summarize_events
 
 
@@ -115,6 +116,20 @@ class ReportTest(unittest.TestCase):
                 {"source_ip": "192.0.2.45", "count": 1},
             ],
         )
+
+    def test_unnamed_connection_close_counts_as_disconnect_not_login_failure(self):
+        events = parse_lines([
+            "Jul  1 08:28:33 lab sshd[1857]: Connection closed by 192.0.2.46 port 40222 [preauth]",
+        ])
+
+        summary = summarize_events(events, failed_threshold=1)
+
+        self.assertEqual(summary.events_checked, 1)
+        self.assertEqual(summary.connection_closed, 1)
+        self.assertEqual(summary.top_preauth_source_ips, [("192.0.2.46", 1)])
+        self.assertEqual(summary.top_source_ips, [])
+        self.assertEqual(summary.top_users, [])
+        self.assertEqual(summary.findings, [])
 
     def test_summarize_events_flags_repeated_failed_sources(self):
         events = [

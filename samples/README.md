@@ -3,8 +3,9 @@
 The sample log is fake auth.log-style data for testing and practice.
 
 It includes failed SSH logins, a standalone invalid-user probe, password and
-public-key successful logins, one pre-authentication connection-close event,
-one pre-authentication received-disconnect event, one SSH negotiation failure,
+public-key successful logins, two pre-authentication connection-close events
+(one before a username is known), one pre-authentication received-disconnect
+event, one SSH negotiation failure,
 and one unrelated sudo line that the parser ignores.
 
 One source IP has 3 invalid-user or failed SSH login events, and another has 2.

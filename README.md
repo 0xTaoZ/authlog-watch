@@ -24,13 +24,13 @@ PYTHONPATH=src python3 -m unittest discover -s tests
 
 ```text
 authlog-watch
-SSH events parsed: 10
+SSH events parsed: 11
 Failed passwords: 2
 Invalid users: 3
 Accepted passwords: 1
 Accepted publickeys: 1
 Disconnected: 0
-Connection closed: 1
+Connection closed: 2
 Received disconnects: 1
 Unable to negotiate: 1
 
@@ -48,6 +48,7 @@ Successful login users
 
 Pre-auth disconnect source IPs
 - 192.0.2.44: 1
+- 192.0.2.46: 1
 - 192.0.2.45: 1
 - 203.0.113.88: 1
 
@@ -97,6 +98,10 @@ PYTHONPATH=src python3 -m authlog_watch samples/auth.log --summary-only
 ```
 
 `--summary-only` is a text output mode and cannot be combined with `--json`.
+
+Connection-close records without a username are included in disconnect counts and
+source summaries. Their event user is `-`; they do not count as failed logins or
+targeted users. Both IPv4 and IPv6 source addresses are supported.
 
 ## Current plan
 

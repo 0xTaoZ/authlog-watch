@@ -114,6 +114,35 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(event.user, "root")
         self.assertEqual(event.source_ip, "192.0.2.44")
 
+    def test_parse_connection_closed_without_user(self):
+        for source_ip in ("192.0.2.46", "2001:db8::46"):
+            with self.subTest(source_ip=source_ip):
+                line = (
+                    "2026-10-09T03:00:01Z lab sshd-session[1857]: "
+                    f"Connection closed by {source_ip} port 40222 [preauth]"
+                )
+                event = parse_line(line)
+
+                self.assertIsNotNone(event)
+                self.assertEqual(event.event_type, "connection_closed")
+                self.assertEqual(event.user, "-")
+                self.assertEqual(event.source_ip, source_ip)
+                self.assertEqual(event.port, "40222")
+                self.assertEqual(event.raw, line)
+
+    def test_parse_connection_closed_preserves_named_users(self):
+        for identity in ("invalid user admin", "authenticating user admin", "user admin", "admin"):
+            with self.subTest(identity=identity):
+                line = (
+                    "Jul  1 08:28:33 lab sshd[1857]: "
+                    f"Connection closed by {identity} 192.0.2.44 port 40222 [preauth]"
+                )
+                event = parse_line(line)
+
+                self.assertIsNotNone(event)
+                self.assertEqual(event.user, "admin")
+                self.assertEqual(event.source_ip, "192.0.2.44")
+
     def test_parse_received_disconnect_preauth(self):
         line = "Jul  1 08:29:01 lab sshd[1858]: Received disconnect from 192.0.2.45 port 40404:11: Bye Bye [preauth]"
 
